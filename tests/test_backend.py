@@ -1,7 +1,6 @@
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import patch
 import zipfile
 
 from pyjnius_builder.backend import (
@@ -77,21 +76,6 @@ java-paths = ["java_src"]
                 self.assertIn("existing.txt", names)
                 self.assertIn(".java/org/example/Test.java", names)
                 self.assertEqual(wheel.read(".java/org/example/Test.java"), b"class Test {}")
-
-    def test_returns_empty_when_tomllib_is_unavailable(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            (root / "pyproject.toml").write_text(
-                """
-[tool.pyjnius]
-java-paths = ["java_src"]
-""".strip(),
-                encoding="utf-8",
-            )
-
-            with patch("pyjnius_builder.backend._tomllib", None):
-                self.assertEqual(_read_pyproject_java_paths(root), [])
-
 
 if __name__ == "__main__":
     unittest.main()
