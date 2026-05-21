@@ -18,8 +18,8 @@ class TestPyjniusBackend(unittest.TestCase):
             pyproject = root / "pyproject.toml"
             pyproject.write_text(
                 """
-[tool.pyjnius-builder]
-java_paths = ["java_from_pyproject"]
+[tool.pyjnius]
+java-paths = ["java_from_pyproject"]
 """.strip(),
                 encoding="utf-8",
             )
@@ -45,8 +45,8 @@ java_paths = ["java_from_pyproject"]
             pyproject = root / "pyproject.toml"
             pyproject.write_text(
                 """
-[tool.pyjnius-builder]
-java_paths = ["java_src"]
+[tool.pyjnius]
+java-paths = ["java_src"]
 """.strip(),
                 encoding="utf-8",
             )
@@ -83,8 +83,8 @@ java_paths = ["java_src"]
             root = Path(tmp)
             (root / "pyproject.toml").write_text(
                 """
-[tool.pyjnius-builder]
-java_paths = ["java_src"]
+[tool.pyjnius]
+java-paths = ["java_src"]
 """.strip(),
                 encoding="utf-8",
             )
