@@ -11,7 +11,7 @@ from pyjnius_builder.backend import (
 )
 
 
-class TestBackendJavaSourceDirs(unittest.TestCase):
+class TestPyjniusBackend(unittest.TestCase):
     def test_reads_java_paths_from_pyproject_and_config_settings(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

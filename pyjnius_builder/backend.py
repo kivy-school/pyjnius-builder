@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from io import BytesIO
 from json import JSONDecodeError
 from pathlib import Path
 import json
@@ -13,9 +14,6 @@ try:
     import tomllib as _tomllib
 except ImportError:  # pragma: no cover
     _tomllib = None
-
-_SDIST_SPOOL_MAX_SIZE = 1024 * 1024
-
 
 def _flatten_paths(value) -> list[str]:
     if value is None:
@@ -129,10 +127,7 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
                     )
                     file_bytes = source_file.read_bytes()
                     tar_info.size = len(file_bytes)
-                    with tempfile.SpooledTemporaryFile(max_size=_SDIST_SPOOL_MAX_SIZE) as spooled:
-                        spooled.write(file_bytes)
-                        spooled.seek(0)
-                        new_tar.addfile(tar_info, spooled)
+                    new_tar.addfile(tar_info, BytesIO(file_bytes))
 
         temp_sdist_path.replace(sdist_path)
 
