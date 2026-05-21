@@ -59,7 +59,7 @@ java_paths = ["java_src"]
 
             self.assertEqual(result, [(root / "java_src").resolve()])
 
-    def test_adds_java_sources_to_dot_java_folder_in_wheel(self):
+    def test_adds_java_sources_to_wheel(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             java_dir = root / "java_src"

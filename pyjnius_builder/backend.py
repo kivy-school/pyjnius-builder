@@ -15,7 +15,10 @@ try:
 except ImportError:  # pragma: no cover
     _tomllib = None
 
-def _parse_and_normalize_paths(value) -> list[str]:
+JAVA_ARCHIVE_PREFIX = ".java"
+
+
+def _parse_path_config_value(value) -> list[str]:
     if value is None:
         return []
     if isinstance(value, str):
@@ -48,7 +51,7 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
         return []
     data = _tomllib.loads(pyproject.read_text(encoding="utf-8"))
     tool_data = data.get("tool", {}).get("pyjnius-builder", {})
-    return _parse_and_normalize_paths(tool_data.get("java_paths"))
+    return _parse_path_config_value(tool_data.get("java_paths"))
 
 
 def get_java_source_dirs(config_settings=None, project_root: Path | None = None) -> list[Path]:
@@ -57,10 +60,10 @@ def get_java_source_dirs(config_settings=None, project_root: Path | None = None)
 
     configured_paths = _read_pyproject_java_paths(root)
     configured_paths.extend(
-        _parse_and_normalize_paths(config_settings.get("java_paths"))
-        + _parse_and_normalize_paths(config_settings.get("java-paths"))
-        + _parse_and_normalize_paths(config_settings.get("java-path"))
-        + _parse_and_normalize_paths(config_settings.get("pyjnius-builder.java_paths"))
+        _parse_path_config_value(config_settings.get("java_paths"))
+        + _parse_path_config_value(config_settings.get("java-paths"))
+        + _parse_path_config_value(config_settings.get("java-path"))
+        + _parse_path_config_value(config_settings.get("pyjnius-builder.java_paths"))
     )
 
     unique_paths: list[Path] = []
@@ -89,7 +92,7 @@ def _collect_java_files(java_dirs: list[Path]) -> list[tuple[Path, str]]:
             if not source_file.is_file():
                 continue
             rel = source_file.relative_to(source_dir).as_posix()
-            java_files.append((source_file, f".java/{rel}"))
+            java_files.append((source_file, f"{JAVA_ARCHIVE_PREFIX}/{rel}"))
     return java_files
 
 
