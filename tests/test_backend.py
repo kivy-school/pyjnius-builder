@@ -34,6 +34,26 @@ java_paths = ["java_from_pyproject"]
                 ],
             )
 
+    def test_deduplicates_repeated_java_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            pyproject = root / "pyproject.toml"
+            pyproject.write_text(
+                """
+[tool.pyjnius-builder]
+java_paths = ["java_src"]
+""".strip(),
+                encoding="utf-8",
+            )
+            (root / "java_src").mkdir()
+
+            result = get_java_source_dirs(
+                config_settings={"java_paths": ["java_src", "java_src"]},
+                project_root=root,
+            )
+
+            self.assertEqual(result, [(root / "java_src").resolve()])
+
     def test_adds_java_sources_to_dot_java_folder_in_wheel(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

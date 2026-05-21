@@ -67,15 +67,19 @@ def get_java_source_dirs(config_settings=None, project_root: Path | None = None)
         if path in seen:
             continue
         if not path.exists():
-            raise FileNotFoundError(f"Configured java path does not exist: {configured_path}")
+            raise FileNotFoundError(
+                f"Configured java path does not exist: {configured_path} (resolved to {path})"
+            )
         if not path.is_dir():
-            raise NotADirectoryError(f"Configured java path is not a directory: {configured_path}")
+            raise NotADirectoryError(
+                f"Configured java path is not a directory: {configured_path} (resolved to {path})"
+            )
         seen.add(path)
         unique_paths.append(path)
     return unique_paths
 
 
-def _iter_java_files(java_dirs: list[Path]) -> list[tuple[Path, str]]:
+def _collect_java_files(java_dirs: list[Path]) -> list[tuple[Path, str]]:
     java_files: list[tuple[Path, str]] = []
     for source_dir in java_dirs:
         for source_file in source_dir.rglob("*"):
@@ -89,7 +93,7 @@ def _iter_java_files(java_dirs: list[Path]) -> list[tuple[Path, str]]:
 def add_java_sources_to_wheel(wheel_path: Path, java_dirs: list[Path]) -> None:
     if not java_dirs:
         return
-    java_files = _iter_java_files(java_dirs)
+    java_files = _collect_java_files(java_dirs)
     if not java_files:
         return
     with zipfile.ZipFile(wheel_path, "a", compression=zipfile.ZIP_DEFLATED) as wheel:
@@ -100,7 +104,7 @@ def add_java_sources_to_wheel(wheel_path: Path, java_dirs: list[Path]) -> None:
 def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
     if not java_dirs:
         return
-    java_files = _iter_java_files(java_dirs)
+    java_files = _collect_java_files(java_dirs)
     if not java_files:
         return
 
@@ -163,4 +167,3 @@ def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
 
 def get_requires_for_build_sdist(config_settings=None):
     return _setuptools_build_meta.get_requires_for_build_sdist(config_settings=config_settings)
-
