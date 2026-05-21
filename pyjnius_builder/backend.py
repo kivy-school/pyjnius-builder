@@ -16,7 +16,7 @@ from hatchling.build import (
     prepare_metadata_for_build_wheel as _hatchling_prepare_metadata_for_build_wheel,
 )
 
-import tomllib as _tomllib
+import tomllib
 
 JAVA_ARCHIVE_PREFIX = ".java"
 
@@ -50,7 +50,7 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
     if not pyproject.exists():
         return []
 
-    data = _tomllib.loads(pyproject.read_text(encoding="utf-8"))
+    data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
     tool_data = data.get("tool", {}).get("pyjnius", {})
     return _parse_path_config_value(tool_data.get("java-paths"))
 
