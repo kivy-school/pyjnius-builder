@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyjnius-builder"
+version = "0.1.0"
+description = "A PEP 517 build backend for Pyjnius-based packages"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = [
+    "hatchling",
+    "tomli; python_version < '3.11'",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pyjnius_builder"]
