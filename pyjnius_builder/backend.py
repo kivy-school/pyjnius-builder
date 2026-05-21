@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import builtins
+from json import JSONDecodeError
 from pathlib import Path
 import json
 import tarfile
@@ -27,7 +28,7 @@ def _flatten_paths(value) -> list[str]:
             if isinstance(parsed, list):
                 paths.extend(str(item).strip() for item in parsed if str(item).strip())
                 continue
-        except Exception:
+        except (JSONDecodeError, TypeError, ValueError):
             pass
 
         paths.extend(part.strip() for part in raw.split(",") if part.strip())
@@ -125,7 +126,7 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
                     )
                     file_bytes = source_file.read_bytes()
                     tar_info.size = len(file_bytes)
-                    with tempfile.SpooledTemporaryFile() as spooled:
+                    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as spooled:
                         spooled.write(file_bytes)
                         spooled.seek(0)
                         new_tar.addfile(tar_info, spooled)

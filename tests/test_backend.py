@@ -95,7 +95,7 @@ java_paths = ["java_src"]
                     raise ImportError("tomllib unavailable")
                 return original_import(name, *args, **kwargs)
 
-            with patch("builtins.__import__", side_effect=import_side_effect):
+            with patch("pyjnius_builder.backend.builtins.__import__", side_effect=import_side_effect):
                 self.assertEqual(_read_pyproject_java_paths(root), [])
 
 
