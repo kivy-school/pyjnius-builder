@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import builtins
 from pathlib import Path
 import json
 import tarfile
@@ -39,8 +40,8 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
         return []
 
     try:
-        import tomllib
-    except ImportError:  # pragma: no cover
+        tomllib = builtins.__import__("tomllib")
+    except ImportError:
         return []
 
     data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
@@ -108,29 +109,28 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
     if not java_files:
         return
 
-    with tempfile.NamedTemporaryFile(suffix=".tar.gz", delete=False) as tmp:
-        temp_sdist_path = Path(tmp.name)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        temp_sdist_path = Path(tmpdir) / "rewritten.tar.gz"
+        with tarfile.open(sdist_path, "r:gz") as source_tar:
+            members = source_tar.getmembers()
+            root_prefix = members[0].name.split("/", 1)[0] if members else ""
 
-    with tarfile.open(sdist_path, "r:gz") as source_tar:
-        members = source_tar.getmembers()
-        root_prefix = members[0].name.split("/", 1)[0] if members else ""
+            with tarfile.open(temp_sdist_path, "w:gz") as new_tar:
+                for member in members:
+                    file_obj = source_tar.extractfile(member) if member.isfile() else None
+                    new_tar.addfile(member, file_obj)
+                for source_file, archive_name in java_files:
+                    tar_info = tarfile.TarInfo(
+                        name=f"{root_prefix}/{archive_name}" if root_prefix else archive_name
+                    )
+                    file_bytes = source_file.read_bytes()
+                    tar_info.size = len(file_bytes)
+                    with tempfile.SpooledTemporaryFile() as spooled:
+                        spooled.write(file_bytes)
+                        spooled.seek(0)
+                        new_tar.addfile(tar_info, spooled)
 
-        with tarfile.open(temp_sdist_path, "w:gz") as new_tar:
-            for member in members:
-                file_obj = source_tar.extractfile(member) if member.isfile() else None
-                new_tar.addfile(member, file_obj)
-            for source_file, archive_name in java_files:
-                tar_info = tarfile.TarInfo(
-                    name=f"{root_prefix}/{archive_name}" if root_prefix else archive_name
-                )
-                file_bytes = source_file.read_bytes()
-                tar_info.size = len(file_bytes)
-                with tempfile.SpooledTemporaryFile() as spooled:
-                    spooled.write(file_bytes)
-                    spooled.seek(0)
-                    new_tar.addfile(tar_info, spooled)
-
-    temp_sdist_path.replace(sdist_path)
+        temp_sdist_path.replace(sdist_path)
 
 
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
