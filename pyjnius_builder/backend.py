@@ -9,10 +9,13 @@ import tempfile
 import zipfile
 
 from hatchling.build import (
+    build_editable as _hatchling_build_editable,
     build_sdist as _hatchling_build_sdist,
     build_wheel as _hatchling_build_wheel,
+    get_requires_for_build_editable as _hatchling_get_requires_for_build_editable,
     get_requires_for_build_sdist as _hatchling_get_requires_for_build_sdist,
     get_requires_for_build_wheel as _hatchling_get_requires_for_build_wheel,
+    prepare_metadata_for_build_editable as _hatchling_prepare_metadata_for_build_editable,
     prepare_metadata_for_build_wheel as _hatchling_prepare_metadata_for_build_wheel,
 )
 
@@ -176,3 +179,25 @@ def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
 
 def get_requires_for_build_sdist(config_settings=None):
     return _hatchling_get_requires_for_build_sdist(config_settings=config_settings)
+
+
+def build_editable(wheel_directory, config_settings=None, metadata_directory=None):
+    java_dirs = get_java_source_dirs(config_settings=config_settings)
+    wheel_name = _hatchling_build_editable(
+        wheel_directory=wheel_directory,
+        config_settings=config_settings,
+        metadata_directory=metadata_directory,
+    )
+    add_java_sources_to_wheel(Path(wheel_directory) / wheel_name, java_dirs)
+    return wheel_name
+
+
+def get_requires_for_build_editable(config_settings=None):
+    return _hatchling_get_requires_for_build_editable(config_settings=config_settings)
+
+
+def prepare_metadata_for_build_editable(metadata_directory, config_settings=None):
+    return _hatchling_prepare_metadata_for_build_editable(
+        metadata_directory=metadata_directory,
+        config_settings=config_settings,
+    )
