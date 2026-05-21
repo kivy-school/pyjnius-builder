@@ -8,7 +8,13 @@ import tarfile
 import tempfile
 import zipfile
 
-from setuptools import build_meta as _setuptools_build_meta
+from hatchling.build import (
+    build_sdist as _hatchling_build_sdist,
+    build_wheel as _hatchling_build_wheel,
+    get_requires_for_build_sdist as _hatchling_get_requires_for_build_sdist,
+    get_requires_for_build_wheel as _hatchling_get_requires_for_build_wheel,
+    prepare_metadata_for_build_wheel as _hatchling_prepare_metadata_for_build_wheel,
+)
 
 try:
     import tomllib as _tomllib
@@ -50,8 +56,8 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
     if _tomllib is None:
         return []
     data = _tomllib.loads(pyproject.read_text(encoding="utf-8"))
-    tool_data = data.get("tool", {}).get("pyjnius-builder", {})
-    return _parse_path_config_value(tool_data.get("java_paths"))
+    tool_data = data.get("tool", {}).get("pyjnius", {})
+    return _parse_path_config_value(tool_data.get("java-paths"))
 
 
 def get_java_source_dirs(config_settings=None, project_root: Path | None = None) -> list[Path]:
@@ -143,7 +149,7 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
 
 def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
     java_dirs = get_java_source_dirs(config_settings=config_settings)
-    wheel_name = _setuptools_build_meta.build_wheel(
+    wheel_name = _hatchling_build_wheel(
         wheel_directory=wheel_directory,
         config_settings=config_settings,
         metadata_directory=metadata_directory,
@@ -154,7 +160,7 @@ def build_wheel(wheel_directory, config_settings=None, metadata_directory=None):
 
 def build_sdist(sdist_directory, config_settings=None):
     java_dirs = get_java_source_dirs(config_settings=config_settings)
-    sdist_name = _setuptools_build_meta.build_sdist(
+    sdist_name = _hatchling_build_sdist(
         sdist_directory=sdist_directory,
         config_settings=config_settings,
     )
@@ -163,15 +169,15 @@ def build_sdist(sdist_directory, config_settings=None):
 
 
 def get_requires_for_build_wheel(config_settings=None):
-    return _setuptools_build_meta.get_requires_for_build_wheel(config_settings=config_settings)
+    return _hatchling_get_requires_for_build_wheel(config_settings=config_settings)
 
 
 def prepare_metadata_for_build_wheel(metadata_directory, config_settings=None):
-    return _setuptools_build_meta.prepare_metadata_for_build_wheel(
+    return _hatchling_prepare_metadata_for_build_wheel(
         metadata_directory=metadata_directory,
         config_settings=config_settings,
     )
 
 
 def get_requires_for_build_sdist(config_settings=None):
-    return _setuptools_build_meta.get_requires_for_build_sdist(config_settings=config_settings)
+    return _hatchling_get_requires_for_build_sdist(config_settings=config_settings)
