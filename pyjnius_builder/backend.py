@@ -15,7 +15,7 @@ try:
 except ImportError:  # pragma: no cover
     _tomllib = None
 
-def _flatten_paths(value) -> list[str]:
+def _parse_and_normalize_paths(value) -> list[str]:
     if value is None:
         return []
     if isinstance(value, str):
@@ -48,7 +48,7 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
         return []
     data = _tomllib.loads(pyproject.read_text(encoding="utf-8"))
     tool_data = data.get("tool", {}).get("pyjnius-builder", {})
-    return _flatten_paths(tool_data.get("java_paths"))
+    return _parse_and_normalize_paths(tool_data.get("java_paths"))
 
 
 def get_java_source_dirs(config_settings=None, project_root: Path | None = None) -> list[Path]:
@@ -57,10 +57,10 @@ def get_java_source_dirs(config_settings=None, project_root: Path | None = None)
 
     configured_paths = _read_pyproject_java_paths(root)
     configured_paths.extend(
-        _flatten_paths(config_settings.get("java_paths"))
-        + _flatten_paths(config_settings.get("java-paths"))
-        + _flatten_paths(config_settings.get("java-path"))
-        + _flatten_paths(config_settings.get("pyjnius-builder.java_paths"))
+        _parse_and_normalize_paths(config_settings.get("java_paths"))
+        + _parse_and_normalize_paths(config_settings.get("java-paths"))
+        + _parse_and_normalize_paths(config_settings.get("java-path"))
+        + _parse_and_normalize_paths(config_settings.get("pyjnius-builder.java_paths"))
     )
 
     unique_paths: list[Path] = []
@@ -119,8 +119,14 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
 
             with tarfile.open(temp_sdist_path, "w:gz") as new_tar:
                 for member in members:
-                    file_obj = source_tar.extractfile(member) if member.isfile() else None
-                    new_tar.addfile(member, file_obj)
+                    if member.isfile():
+                        extracted = source_tar.extractfile(member)
+                        if extracted is None:
+                            continue
+                        with extracted:
+                            new_tar.addfile(member, extracted)
+                    else:
+                        new_tar.addfile(member)
                 for source_file, archive_name in java_files:
                     tar_info = tarfile.TarInfo(
                         name=f"{root_prefix}/{archive_name}" if root_prefix else archive_name

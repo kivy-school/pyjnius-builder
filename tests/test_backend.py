@@ -74,6 +74,7 @@ java_paths = ["java_src"]
 
             with zipfile.ZipFile(wheel_path) as wheel:
                 names = set(wheel.namelist())
+                self.assertIn("existing.txt", names)
                 self.assertIn(".java/org/example/Test.java", names)
                 self.assertEqual(wheel.read(".java/org/example/Test.java"), b"class Test {}")
 
