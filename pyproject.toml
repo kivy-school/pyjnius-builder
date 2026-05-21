@@ -8,10 +8,9 @@ version = "0.1.0"
 description = "A PEP 517 build backend for Pyjnius-based packages"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 dependencies = [
     "hatchling",
-    "tomli; python_version < '3.11'",
 ]
 
 [tool.hatch.build.targets.wheel]
