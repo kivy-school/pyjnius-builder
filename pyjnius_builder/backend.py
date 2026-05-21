@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import builtins
 from json import JSONDecodeError
 from pathlib import Path
 import json
@@ -9,6 +8,13 @@ import tempfile
 import zipfile
 
 from setuptools import build_meta as _setuptools_build_meta
+
+try:
+    import tomllib as _tomllib
+except ImportError:  # pragma: no cover
+    _tomllib = None
+
+_SDIST_SPOOL_MAX_SIZE = 1024 * 1024
 
 
 def _flatten_paths(value) -> list[str]:
@@ -40,12 +46,9 @@ def _read_pyproject_java_paths(project_root: Path) -> list[str]:
     if not pyproject.exists():
         return []
 
-    try:
-        tomllib = builtins.__import__("tomllib")
-    except ImportError:
+    if _tomllib is None:
         return []
-
-    data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
+    data = _tomllib.loads(pyproject.read_text(encoding="utf-8"))
     tool_data = data.get("tool", {}).get("pyjnius-builder", {})
     return _flatten_paths(tool_data.get("java_paths"))
 
@@ -126,7 +129,7 @@ def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
                     )
                     file_bytes = source_file.read_bytes()
                     tar_info.size = len(file_bytes)
-                    with tempfile.SpooledTemporaryFile(max_size=1024 * 1024) as spooled:
+                    with tempfile.SpooledTemporaryFile(max_size=_SDIST_SPOOL_MAX_SIZE) as spooled:
                         spooled.write(file_bytes)
                         spooled.seek(0)
                         new_tar.addfile(tar_info, spooled)

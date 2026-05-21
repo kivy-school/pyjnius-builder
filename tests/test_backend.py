@@ -88,14 +88,7 @@ java_paths = ["java_src"]
                 encoding="utf-8",
             )
 
-            original_import = __import__
-
-            def import_side_effect(name, *args, **kwargs):
-                if name == "tomllib":
-                    raise ImportError("tomllib unavailable")
-                return original_import(name, *args, **kwargs)
-
-            with patch("pyjnius_builder.backend.builtins.__import__", side_effect=import_side_effect):
+            with patch("pyjnius_builder.backend._tomllib", None):
                 self.assertEqual(_read_pyproject_java_paths(root), [])
 
 
