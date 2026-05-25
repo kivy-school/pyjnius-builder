@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class AdService:
+    CLASS_NAME: ClassVar[str]
+    def __init__(self) -> None: ...
+    def onHandleIntent(self, arg0: "Intent") -> None: ...

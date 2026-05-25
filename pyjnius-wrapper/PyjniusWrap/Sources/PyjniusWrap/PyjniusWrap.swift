@@ -24,6 +24,10 @@ struct PyjniusWrap: ParsableCommand {
     @Flag(name: .long, help: "Flatten output into a single wrappers.py file.")
     var singleFile: Bool = false
 
+    @Flag(name: .long,
+          help: "Keep the full Java reverse-DNS package path (e.g. com/google/android/gms/ads/MobileAds.py). Default: strip the longest common prefix for a shorter, more Pythonic layout.")
+    var keepPackagePrefix: Bool = false
+
     func run() throws {
         let inURL = URL(fileURLWithPath: inputDir)
         let outURL = URL(fileURLWithPath: outputDir)
@@ -37,7 +41,8 @@ struct PyjniusWrap: ParsableCommand {
             outputDir: outURL,
             jarPath: jarURL,
             javaExecutable: javaExecutable,
-            fileLayout: singleFile ? .singleFile : .perClass
+            fileLayout: singleFile ? .singleFile : .perClass,
+            stripCommonPackagePrefix: !keepPackagePrefix
         ))
         for url in written {
             print(url.path)

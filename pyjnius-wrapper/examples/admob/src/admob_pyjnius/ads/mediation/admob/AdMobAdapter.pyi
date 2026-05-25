@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class AdMobAdapter:
+    NEW_BUNDLE: ClassVar[str]
+    def __init__(self) -> None: ...
+    def buildExtrasBundle(self, arg0: "Bundle", arg1: "Bundle") -> "Bundle": ...

@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class zzq:
+    zza: ClassVar["zzq"]
+    def __init__(self) -> None: ...
+    def zza(self, arg0: "Context", arg1: "zzeh") -> "zzm": ...

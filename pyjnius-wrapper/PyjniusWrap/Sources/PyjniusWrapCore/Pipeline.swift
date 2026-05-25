@@ -11,15 +11,22 @@ public struct Pipeline {
         public var jarPath: URL
         public var javaExecutable: String
         public var fileLayout: FileLayout
+        /// When true, strip the longest common reverse-DNS prefix shared by
+        /// every emitted class (e.g. `com.google.android.gms.`) so the
+        /// output tree is short and Pythonic instead of mirroring Java's
+        /// package convention.
+        public var stripCommonPackagePrefix: Bool
 
         public init(inputDir: URL, outputDir: URL, jarPath: URL,
                     javaExecutable: String = "java",
-                    fileLayout: FileLayout = .perClass) {
+                    fileLayout: FileLayout = .perClass,
+                    stripCommonPackagePrefix: Bool = true) {
             self.inputDir = inputDir
             self.outputDir = outputDir
             self.jarPath = jarPath
             self.javaExecutable = javaExecutable
             self.fileLayout = fileLayout
+            self.stripCommonPackagePrefix = stripCommonPackagePrefix
         }
     }
 
@@ -61,9 +68,15 @@ public struct Pipeline {
     /// Decoupled hook so tests can feed a pre-baked AST without launching the JVM.
     public func emit(doc: AstDocument, opts: Options) throws -> [URL] {
         let emitter = PyWrapperEmitter()
+        let pyiEmitter = PyiStubEmitter()
         try FileManager.default.createDirectory(at: opts.outputDir,
                                                 withIntermediateDirectories: true)
         var written: [URL] = []
+
+        // Compute prefix to strip (or empty array if disabled / not applicable).
+        let stripPrefix: [String] = opts.stripCommonPackagePrefix
+            ? commonPackagePrefix(of: doc.classes)
+            : []
 
         switch opts.fileLayout {
         case .perClass:
@@ -71,7 +84,7 @@ public struct Pipeline {
             for cls in doc.classes {
                 let module = emitter.module(for: cls)
                 let code = generatePythonCode(from: module)
-                let pkgParts = packageParts(of: cls.fqcn)
+                let pkgParts = packageParts(of: cls.fqcn, stripping: stripPrefix)
                 var dir = opts.outputDir
                 for part in pkgParts {
                     dir.appendPathComponent(part)
@@ -81,6 +94,12 @@ public struct Pipeline {
                 let file = dir.appendingPathComponent("\(cls.simpleName).py")
                 try code.write(to: file, atomically: true, encoding: .utf8)
                 written.append(file)
+
+                // Companion .pyi stub with Pythonic types.
+                let stub = pyiEmitter.render(cls)
+                let stubFile = dir.appendingPathComponent("\(cls.simpleName).pyi")
+                try stub.write(to: stubFile, atomically: true, encoding: .utf8)
+                written.append(stubFile)
             }
             // Ensure every package on the path has an __init__.py
             for dir in packagesTouched {
@@ -118,10 +137,39 @@ public struct Pipeline {
         return written
     }
 
-    private func packageParts(of fqcn: String) -> [String] {
+    private func packageParts(of fqcn: String,
+                              stripping prefix: [String] = []) -> [String] {
         let parts = fqcn.split(separator: ".").map(String.init)
         if parts.count <= 1 { return [] }
-        return Array(parts.dropLast())
+        var pkg = Array(parts.dropLast())
+        if !prefix.isEmpty,
+           pkg.count >= prefix.count,
+           Array(pkg.prefix(prefix.count)) == prefix {
+            pkg.removeFirst(prefix.count)
+        }
+        return pkg
+    }
+
+    /// Longest common package prefix (as ordered segments) across all
+    /// top-level classes. Returns `[]` when fewer than two classes exist
+    /// or when nothing meaningful is shared.
+    private func commonPackagePrefix(of classes: [ClassNode]) -> [String] {
+        var pkgs: [[String]] = []
+        for cls in classes {
+            let parts = cls.fqcn.split(separator: ".").map(String.init)
+            guard parts.count > 1 else { return [] }
+            pkgs.append(Array(parts.dropLast()))
+        }
+        guard let first = pkgs.first else { return [] }
+        var prefix = first
+        for pkg in pkgs.dropFirst() {
+            var i = 0
+            let limit = Swift.min(prefix.count, pkg.count)
+            while i < limit && prefix[i] == pkg[i] { i += 1 }
+            prefix = Array(prefix.prefix(i))
+            if prefix.isEmpty { return [] }
+        }
+        return prefix
     }
 
     private func invokeJar(opts: Options) throws -> Data {

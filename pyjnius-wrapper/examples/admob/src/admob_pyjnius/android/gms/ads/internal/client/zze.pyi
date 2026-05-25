@@ -1,0 +1,13 @@
+from typing import Any, ClassVar, overload
+
+class zze:
+    CREATOR: ClassVar["Creator"]
+    zza: int
+    zzb: str
+    zzc: str
+    zzd: "zze"
+    zze: "IBinder"
+    def __init__(self, arg0: int, arg1: str, arg2: str, arg3: "zze", arg4: "IBinder") -> None: ...
+    def writeToParcel(self, arg0: "Parcel", arg1: int) -> None: ...
+    def zza(self) -> "AdError": ...
+    def zzb(self) -> "LoadAdError": ...

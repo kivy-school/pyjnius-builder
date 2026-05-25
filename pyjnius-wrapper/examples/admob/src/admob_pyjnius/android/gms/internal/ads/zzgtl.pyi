@@ -1,0 +1,9 @@
+from typing import Any, ClassVar, overload
+
+class zzgtl:
+    @staticmethod
+    def zzb(arg0: "StringBuilder", arg1: "Iterable", arg2: str) -> "StringBuilder": ...
+    @staticmethod
+    def zzc(arg0: "StringBuilder", arg1: "Iterator", arg2: str) -> "StringBuilder": ...
+    @staticmethod
+    def zzd(arg0: "Iterable", arg1: str) -> str: ...

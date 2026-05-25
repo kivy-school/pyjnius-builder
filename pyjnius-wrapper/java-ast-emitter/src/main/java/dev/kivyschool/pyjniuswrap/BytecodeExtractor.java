@@ -136,7 +136,7 @@ public final class BytecodeExtractor {
             AstDtos.ClassNode parent = byInternal.get(outer);
             AstDtos.ClassNode child = byInternal.get(key);
             if (parent == null || child == null) continue;
-            // Promote enum constants & accessibility filter is applied at top-level.
+            if (!hasValidSimpleName(child)) continue; // skip anonymous classes ("1", "2", ...)
             parent.nested.add(child);
         }
 
@@ -145,6 +145,7 @@ public final class BytecodeExtractor {
             if (outerOf.containsKey(key)) continue; // nested — already attached
             AstDtos.ClassNode top = byInternal.get(key);
             if (top == null) continue;
+            if (!hasValidSimpleName(top)) continue; // skip anonymous classes
             if (!isPublicOrProtected(top.modifiers)) continue;
             stripPrivateMembers(top);
             doc.classes.add(top);
@@ -160,6 +161,13 @@ public final class BytecodeExtractor {
     private static boolean isPublicOrProtected(List<AstDtos.Modifier> mods) {
         if (mods == null) return false;
         return mods.contains(AstDtos.Modifier.PUBLIC) || mods.contains(AstDtos.Modifier.PROTECTED);
+    }
+
+    /** Anonymous Java classes get a numeric simple name (e.g. "1").  These cannot
+     *  become valid Python class names, so we skip them. */
+    private static boolean hasValidSimpleName(AstDtos.ClassNode node) {
+        if (node.simpleName == null || node.simpleName.isEmpty()) return false;
+        return !Character.isDigit(node.simpleName.charAt(0));
     }
 
     /** Recursively drop nested entries that are not public/protected. */

@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class MediationUtils:
+    def __init__(self) -> None: ...
+    @staticmethod
+    def findClosestSize(arg0: "Context", arg1: "AdSize", arg2: list) -> "AdSize": ...

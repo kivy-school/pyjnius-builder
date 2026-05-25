@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class zzbki:
+    def __init__(self, arg0: str, arg1: Any, arg2: int) -> None: ...
+    @staticmethod
+    def zzf(arg0: str, arg1: bool) -> "zzbkh": ...

@@ -1,0 +1,6 @@
+from typing import Any, ClassVar, overload
+
+class zzcdb:
+    def __init__(self) -> None: ...
+    @staticmethod
+    def zza(arg0: "Context", arg1: str, arg2: "zzbvj") -> "zzccp": ...
