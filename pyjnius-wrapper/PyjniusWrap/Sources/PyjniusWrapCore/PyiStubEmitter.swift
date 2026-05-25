@@ -118,7 +118,19 @@ public struct PyiStubEmitter {
             lines.append("# Bound as empty classes so annotations resolve in the IDE.")
             for name in externalOrder {
                 let fqcn = externals[name] ?? name
-                lines.append("class \(name): ...  # \(fqcn)")
+                lines.append("class \(name):")
+                lines.append("    \"\"\"Forward declaration for ``\(fqcn)``.")
+                lines.append("")
+                lines.append("    This Java type is referenced by the wrapper but is not itself")
+                lines.append("    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a")
+                lines.append("    live ``autoclass('\(fqcn)')`` proxy; this empty class exists")
+                lines.append("    purely so static type checkers and IDEs can resolve the name.")
+                if let url = Self.javadocURL(for: fqcn) {
+                    lines.append("")
+                    lines.append("    See: \(url)")
+                }
+                lines.append("    \"\"\"")
+                lines.append("    ...")
             }
         }
         lines.append("")
@@ -249,6 +261,35 @@ public struct PyiStubEmitter {
         guard let first = s.first else { return false }
         guard first.isLetter || first == "_" else { return false }
         return s.allSatisfy { $0.isLetter || $0.isNumber || $0 == "_" }
+    }
+
+    /// Best-effort JavaDoc URL for an external FQCN. Returns nil when we
+    /// don't have a reliable doc host for that namespace.
+    internal static func javadocURL(for fqcn: String) -> String? {
+        // Drop any trailing `[]` and nested-class `$` markers (we never use
+        // `$` here but be defensive).
+        var clean = fqcn
+        while clean.hasSuffix("[]") { clean.removeLast(2) }
+        clean = clean.replacingOccurrences(of: "$", with: ".")
+        let slashed = clean.replacingOccurrences(of: ".", with: "/")
+        if clean.hasPrefix("android.") || clean.hasPrefix("androidx.")
+            || clean.hasPrefix("dalvik.") {
+            return "https://developer.android.com/reference/\(slashed)"
+        }
+        if clean.hasPrefix("java.") || clean.hasPrefix("javax.")
+            || clean.hasPrefix("org.w3c.") || clean.hasPrefix("org.xml.") {
+            // Stable classic JavaDoc — every java.* / javax.* class has a
+            // page at this host, no module path needed.
+            return "https://docs.oracle.com/javase/8/docs/api/\(slashed).html"
+        }
+        if clean.hasPrefix("kotlin.") || clean.hasPrefix("kotlinx.") {
+            return "https://kotlinlang.org/api/latest/jvm/stdlib/\(slashed)/"
+        }
+        if clean.hasPrefix("com.google.android.gms.")
+            || clean.hasPrefix("com.google.firebase.") {
+            return "https://developers.google.com/android/reference/\(slashed)"
+        }
+        return nil
     }
 
     private func safeParamName(_ name: String, idx: Int) -> String {

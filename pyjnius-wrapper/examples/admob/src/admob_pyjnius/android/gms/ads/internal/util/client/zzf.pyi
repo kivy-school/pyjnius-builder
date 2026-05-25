@@ -8,14 +8,92 @@ from android.gms.ads.preload.PreloadConfiguration import PreloadConfiguration
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Handler: ...  # android.os.Handler
-class Context: ...  # android.content.Context
-class ViewGroup: ...  # android.view.ViewGroup
-class MemoryInfo: ...  # android.app.ActivityManager.MemoryInfo
-class Bundle: ...  # android.os.Bundle
-class JSONObject: ...  # org.json.JSONObject
-class DisplayMetrics: ...  # android.util.DisplayMetrics
-class StackTraceElement: ...  # java.lang.StackTraceElement
+class Handler:
+    """Forward declaration for ``android.os.Handler``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.os.Handler')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/os/Handler
+    """
+    ...
+class Context:
+    """Forward declaration for ``android.content.Context``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.content.Context')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/content/Context
+    """
+    ...
+class ViewGroup:
+    """Forward declaration for ``android.view.ViewGroup``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.view.ViewGroup')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/view/ViewGroup
+    """
+    ...
+class MemoryInfo:
+    """Forward declaration for ``android.app.ActivityManager.MemoryInfo``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.app.ActivityManager.MemoryInfo')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/app/ActivityManager/MemoryInfo
+    """
+    ...
+class Bundle:
+    """Forward declaration for ``android.os.Bundle``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/os/Bundle
+    """
+    ...
+class JSONObject:
+    """Forward declaration for ``org.json.JSONObject``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('org.json.JSONObject')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+    """
+    ...
+class DisplayMetrics:
+    """Forward declaration for ``android.util.DisplayMetrics``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.util.DisplayMetrics')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/util/DisplayMetrics
+    """
+    ...
+class StackTraceElement:
+    """Forward declaration for ``java.lang.StackTraceElement``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.lang.StackTraceElement')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/lang/StackTraceElement.html
+    """
+    ...
 
 class zzf:
     zza: ClassVar[Handler]

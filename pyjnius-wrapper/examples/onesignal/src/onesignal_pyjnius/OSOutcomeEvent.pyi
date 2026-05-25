@@ -4,8 +4,24 @@ from outcomes.domain.OSOutcomeEventParams import OSOutcomeEventParams
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class JSONArray: ...  # org.json.JSONArray
-class JSONObject: ...  # org.json.JSONObject
+class JSONArray:
+    """Forward declaration for ``org.json.JSONArray``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('org.json.JSONArray')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+    """
+    ...
+class JSONObject:
+    """Forward declaration for ``org.json.JSONObject``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('org.json.JSONObject')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+    """
+    ...
 
 class OSOutcomeEvent:
     def __init__(self, arg0: OSInfluenceType, arg1: JSONArray, arg2: str, arg3: int, arg4: float) -> None: ...

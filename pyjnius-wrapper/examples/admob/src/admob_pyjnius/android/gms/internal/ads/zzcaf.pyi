@@ -4,9 +4,39 @@ from android.gms.internal.ads.zzcah import zzcah
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Context: ...  # android.content.Context
-class Throwable: ...  # java.lang.Throwable
-class Thread: ...  # java.lang.Thread
+class Context:
+    """Forward declaration for ``android.content.Context``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.content.Context')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/content/Context
+    """
+    ...
+class Throwable:
+    """Forward declaration for ``java.lang.Throwable``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.lang.Throwable')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html
+    """
+    ...
+class Thread:
+    """Forward declaration for ``java.lang.Thread``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.lang.Thread')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
+    """
+    ...
 
 class zzcaf:
     zza: ClassVar[zzcah]

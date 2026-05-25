@@ -3,10 +3,50 @@ from android.gms.internal.ads.zzgai import zzgai
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class URL: ...  # java.net.URL
-class URLConnection: ...  # java.net.URLConnection
-class Network: ...  # android.net.Network
-class HttpURLConnection: ...  # java.net.HttpURLConnection
+class URL:
+    """Forward declaration for ``java.net.URL``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.net.URL')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/net/URL.html
+    """
+    ...
+class URLConnection:
+    """Forward declaration for ``java.net.URLConnection``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.net.URLConnection')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/net/URLConnection.html
+    """
+    ...
+class Network:
+    """Forward declaration for ``android.net.Network``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.net.Network')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/net/Network
+    """
+    ...
+class HttpURLConnection:
+    """Forward declaration for ``java.net.HttpURLConnection``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.net.HttpURLConnection')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html
+    """
+    ...
 
 class zzgas:
     def zzf(self, arg0: URL, arg1: int) -> URLConnection: ...

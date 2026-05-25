@@ -3,8 +3,28 @@ from android.gms.ads.VideoController import VideoController
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Bundle: ...  # android.os.Bundle
-class Image: ...  # com.google.android.gms.ads.formats.NativeAd.Image
+class Bundle:
+    """Forward declaration for ``android.os.Bundle``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/os/Bundle
+    """
+    ...
+class Image:
+    """Forward declaration for ``com.google.android.gms.ads.formats.NativeAd.Image``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.ads.formats.NativeAd.Image')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/ads/formats/NativeAd/Image
+    """
+    ...
 
 class UnifiedNativeAd:
     def __init__(self) -> None: ...

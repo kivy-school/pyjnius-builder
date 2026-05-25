@@ -5,11 +5,61 @@ from android.gms.ads.nativead.NativeAd import NativeAd
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Context: ...  # android.content.Context
-class AttributeSet: ...  # android.util.AttributeSet
-class View: ...  # android.view.View
-class LayoutParams: ...  # android.view.ViewGroup.LayoutParams
-class MotionEvent: ...  # android.view.MotionEvent
+class Context:
+    """Forward declaration for ``android.content.Context``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.content.Context')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/content/Context
+    """
+    ...
+class AttributeSet:
+    """Forward declaration for ``android.util.AttributeSet``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.util.AttributeSet')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/util/AttributeSet
+    """
+    ...
+class View:
+    """Forward declaration for ``android.view.View``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.view.View')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/view/View
+    """
+    ...
+class LayoutParams:
+    """Forward declaration for ``android.view.ViewGroup.LayoutParams``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.view.ViewGroup.LayoutParams')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/view/ViewGroup/LayoutParams
+    """
+    ...
+class MotionEvent:
+    """Forward declaration for ``android.view.MotionEvent``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.view.MotionEvent')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/view/MotionEvent
+    """
+    ...
 
 class NativeAdView:
     @overload

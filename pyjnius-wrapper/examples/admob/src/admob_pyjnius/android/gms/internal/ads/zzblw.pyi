@@ -2,9 +2,39 @@ from typing import Any, ClassVar, overload
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Drawable: ...  # android.graphics.drawable.Drawable
-class Uri: ...  # android.net.Uri
-class IObjectWrapper: ...  # com.google.android.gms.dynamic.IObjectWrapper
+class Drawable:
+    """Forward declaration for ``android.graphics.drawable.Drawable``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.graphics.drawable.Drawable')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/graphics/drawable/Drawable
+    """
+    ...
+class Uri:
+    """Forward declaration for ``android.net.Uri``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.net.Uri')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/net/Uri
+    """
+    ...
+class IObjectWrapper:
+    """Forward declaration for ``com.google.android.gms.dynamic.IObjectWrapper``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.dynamic.IObjectWrapper')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/dynamic/IObjectWrapper
+    """
+    ...
 
 class zzblw:
     def __init__(self, arg0: Drawable, arg1: Uri, arg2: float, arg3: int, arg4: int, arg5: dict) -> None: ...

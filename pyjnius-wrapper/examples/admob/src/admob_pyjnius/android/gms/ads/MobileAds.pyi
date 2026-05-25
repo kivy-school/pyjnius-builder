@@ -8,11 +8,61 @@ from android.gms.ads.preload.PreloadCallback import PreloadCallback
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Context: ...  # android.content.Context
-class WebView: ...  # android.webkit.WebView
-class CustomTabsClient: ...  # androidx.browser.customtabs.CustomTabsClient
-class CustomTabsCallback: ...  # androidx.browser.customtabs.CustomTabsCallback
-class CustomTabsSession: ...  # androidx.browser.customtabs.CustomTabsSession
+class Context:
+    """Forward declaration for ``android.content.Context``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.content.Context')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/content/Context
+    """
+    ...
+class WebView:
+    """Forward declaration for ``android.webkit.WebView``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.webkit.WebView')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/webkit/WebView
+    """
+    ...
+class CustomTabsClient:
+    """Forward declaration for ``androidx.browser.customtabs.CustomTabsClient``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('androidx.browser.customtabs.CustomTabsClient')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/androidx/browser/customtabs/CustomTabsClient
+    """
+    ...
+class CustomTabsCallback:
+    """Forward declaration for ``androidx.browser.customtabs.CustomTabsCallback``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('androidx.browser.customtabs.CustomTabsCallback')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/androidx/browser/customtabs/CustomTabsCallback
+    """
+    ...
+class CustomTabsSession:
+    """Forward declaration for ``androidx.browser.customtabs.CustomTabsSession``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('androidx.browser.customtabs.CustomTabsSession')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/androidx/browser/customtabs/CustomTabsSession
+    """
+    ...
 
 class MobileAds:
     ERROR_DOMAIN: ClassVar[str]

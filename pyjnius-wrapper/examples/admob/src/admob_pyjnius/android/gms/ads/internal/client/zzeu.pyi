@@ -9,8 +9,28 @@ from android.gms.ads.preload.zzb import zzb
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Context: ...  # android.content.Context
-class Status: ...  # com.google.android.gms.common.api.Status
+class Context:
+    """Forward declaration for ``android.content.Context``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.content.Context')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/content/Context
+    """
+    ...
+class Status:
+    """Forward declaration for ``com.google.android.gms.common.api.Status``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.common.api.Status')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/common/api/Status
+    """
+    ...
 
 class zzeu:
     zza: ClassVar[set]

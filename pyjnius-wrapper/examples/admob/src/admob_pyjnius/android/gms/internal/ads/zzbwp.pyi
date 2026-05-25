@@ -5,8 +5,28 @@ from android.gms.internal.ads.zzbma import zzbma
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Date: ...  # java.util.Date
-class Location: ...  # android.location.Location
+class Date:
+    """Forward declaration for ``java.util.Date``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.util.Date')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/util/Date.html
+    """
+    ...
+class Location:
+    """Forward declaration for ``android.location.Location``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.location.Location')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/location/Location
+    """
+    ...
 
 class zzbwp:
     def __init__(self, arg0: Date, arg1: int, arg2: set, arg3: Location, arg4: bool, arg5: int, arg6: zzbma, arg7: list, arg8: bool, arg9: int, arg10: str) -> None: ...

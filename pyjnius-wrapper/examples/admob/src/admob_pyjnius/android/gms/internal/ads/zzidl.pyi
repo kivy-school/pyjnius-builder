@@ -5,9 +5,39 @@ from android.gms.internal.ads.zzidp import zzidp
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Iterable: ...  # java.lang.Iterable
-class ByteBuffer: ...  # java.nio.ByteBuffer
-class Charset: ...  # java.nio.charset.Charset
+class Iterable:
+    """Forward declaration for ``java.lang.Iterable``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.lang.Iterable')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html
+    """
+    ...
+class ByteBuffer:
+    """Forward declaration for ``java.nio.ByteBuffer``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.nio.ByteBuffer')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/nio/ByteBuffer.html
+    """
+    ...
+class Charset:
+    """Forward declaration for ``java.nio.charset.Charset``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('java.nio.charset.Charset')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html
+    """
+    ...
 
 class zzidl:
     zza: ClassVar["zzidl"]

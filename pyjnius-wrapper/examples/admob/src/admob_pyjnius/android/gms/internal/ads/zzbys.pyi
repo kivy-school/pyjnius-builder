@@ -8,10 +8,50 @@ from android.gms.internal.ads.zzboc import zzboc
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Bundle: ...  # android.os.Bundle
-class Image: ...  # com.google.android.gms.ads.nativead.NativeAd.Image
-class AdChoicesInfo: ...  # com.google.android.gms.ads.nativead.NativeAd.AdChoicesInfo
-class UnconfirmedClickListener: ...  # com.google.android.gms.ads.nativead.NativeAd.UnconfirmedClickListener
+class Bundle:
+    """Forward declaration for ``android.os.Bundle``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developer.android.com/reference/android/os/Bundle
+    """
+    ...
+class Image:
+    """Forward declaration for ``com.google.android.gms.ads.nativead.NativeAd.Image``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.ads.nativead.NativeAd.Image')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/ads/nativead/NativeAd/Image
+    """
+    ...
+class AdChoicesInfo:
+    """Forward declaration for ``com.google.android.gms.ads.nativead.NativeAd.AdChoicesInfo``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.ads.nativead.NativeAd.AdChoicesInfo')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/ads/nativead/NativeAd/AdChoicesInfo
+    """
+    ...
+class UnconfirmedClickListener:
+    """Forward declaration for ``com.google.android.gms.ads.nativead.NativeAd.UnconfirmedClickListener``.
+
+    This Java type is referenced by the wrapper but is not itself
+    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
+    live ``autoclass('com.google.android.gms.ads.nativead.NativeAd.UnconfirmedClickListener')`` proxy; this empty class exists
+    purely so static type checkers and IDEs can resolve the name.
+
+    See: https://developers.google.com/android/reference/com/google/android/gms/ads/nativead/NativeAd/UnconfirmedClickListener
+    """
+    ...
 
 class zzbys:
     def __init__(self, arg0: zzboc) -> None: ...
