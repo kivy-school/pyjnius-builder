@@ -16,17 +16,24 @@ public struct Pipeline {
         /// output tree is short and Pythonic instead of mirroring Java's
         /// package convention.
         public var stripCommonPackagePrefix: Bool
+        /// Maps a Java package prefix (must end with `.`) to an existing
+        /// Python module prefix. Used by the `.pyi` emitter to route
+        /// unwrapped externals into a pre-existing wrapper package
+        /// instead of synthesizing forward-declared stubs.
+        public var externalModules: [(javaPrefix: String, pyPrefix: String)]
 
         public init(inputDir: URL, outputDir: URL, jarPath: URL,
                     javaExecutable: String = "java",
                     fileLayout: FileLayout = .perClass,
-                    stripCommonPackagePrefix: Bool = true) {
+                    stripCommonPackagePrefix: Bool = true,
+                    externalModules: [(javaPrefix: String, pyPrefix: String)] = []) {
             self.inputDir = inputDir
             self.outputDir = outputDir
             self.jarPath = jarPath
             self.javaExecutable = javaExecutable
             self.fileLayout = fileLayout
             self.stripCommonPackagePrefix = stripCommonPackagePrefix
+            self.externalModules = externalModules
         }
     }
 
@@ -97,7 +104,8 @@ public struct Pipeline {
         let resolution = PyiStubEmitter.Resolution(
             topLevelFqcns: topLevelFqcns,
             allFqcns: allFqcns,
-            modulePath: modulePath
+            modulePath: modulePath,
+            externalModules: opts.externalModules
         )
 
         switch opts.fileLayout {

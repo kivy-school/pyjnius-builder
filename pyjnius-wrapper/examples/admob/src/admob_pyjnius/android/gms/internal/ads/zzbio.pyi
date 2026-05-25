@@ -1,18 +1,10 @@
 from typing import Any, ClassVar, overload
+from android.content.SharedPreferences import SharedPreferences
+from android.content.SharedPreferences.Editor import Editor
+from android.os.Bundle import Bundle
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class SharedPreferences:
-    """Forward declaration for ``android.content.SharedPreferences``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.SharedPreferences')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/SharedPreferences
-    """
-    ...
 class JSONObject:
     """Forward declaration for ``org.json.JSONObject``.
 
@@ -20,28 +12,6 @@ class JSONObject:
     wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
     live ``autoclass('org.json.JSONObject')`` proxy; this empty class exists
     purely so static type checkers and IDEs can resolve the name.
-    """
-    ...
-class Editor:
-    """Forward declaration for ``android.content.SharedPreferences.Editor``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.SharedPreferences.Editor')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/SharedPreferences/Editor
-    """
-    ...
-class Bundle:
-    """Forward declaration for ``android.os.Bundle``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Bundle
     """
     ...
 

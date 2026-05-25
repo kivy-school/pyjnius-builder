@@ -1,35 +1,12 @@
 from typing import Any, ClassVar, overload
+from android.content.Context import Context
 from android.gms.ads.AdListener import AdListener
 from android.gms.ads.AdRequest import AdRequest
 from android.gms.ads.AdSize import AdSize
 from android.gms.ads.OnPaidEventListener import OnPaidEventListener
 from android.gms.ads.ResponseInfo import ResponseInfo
 from android.gms.ads.internal.client.zzek import zzek
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class Context:
-    """Forward declaration for ``android.content.Context``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.Context')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/Context
-    """
-    ...
-class AttributeSet:
-    """Forward declaration for ``android.util.AttributeSet``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.util.AttributeSet')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/util/AttributeSet
-    """
-    ...
+from android.util.AttributeSet import AttributeSet
 
 class BaseAdView:
     zza: zzek

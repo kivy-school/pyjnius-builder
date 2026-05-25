@@ -28,12 +28,21 @@ struct PyjniusWrap: ParsableCommand {
           help: "Keep the full Java reverse-DNS package path (e.g. com/google/android/gms/ads/MobileAds.py). Default: strip the longest common prefix for a shorter, more Pythonic layout.")
     var keepPackagePrefix: Bool = false
 
+    @Option(name: .customLong("external-module"),
+            parsing: .singleValue,
+            help: ArgumentHelp(
+                "Map a Java package prefix to an existing Python module so its classes are imported instead of stubbed (repeatable).",
+                discussion: "Form: '<java.prefix.>=<python.prefix>' (e.g. 'android.=android'). When '=<python.prefix>' is omitted, the Java prefix minus its trailing dot is used. The Java prefix MUST end with '.' so 'android.' doesn't accidentally match 'androidx.'."))
+    var externalModule: [String] = []
+
     func run() throws {
         let inURL = URL(fileURLWithPath: inputDir)
         let outURL = URL(fileURLWithPath: outputDir)
         let jarURL: URL
         if let jar { jarURL = URL(fileURLWithPath: jar) }
         else { jarURL = try resolveBundledJar() }
+
+        let externals = try parseExternalModules(externalModule)
 
         let pipeline = Pipeline()
         let written = try pipeline.run(.init(
@@ -42,12 +51,43 @@ struct PyjniusWrap: ParsableCommand {
             jarPath: jarURL,
             javaExecutable: javaExecutable,
             fileLayout: singleFile ? .singleFile : .perClass,
-            stripCommonPackagePrefix: !keepPackagePrefix
+            stripCommonPackagePrefix: !keepPackagePrefix,
+            externalModules: externals
         ))
         for url in written {
             print(url.path)
         }
     }
+
+    private func parseExternalModules(_ raw: [String])
+        throws -> [(javaPrefix: String, pyPrefix: String)] {
+        var result: [(String, String)] = []
+        for entry in raw {
+            let parts = entry.split(separator: "=", maxSplits: 1,
+                                    omittingEmptySubsequences: false)
+            let javaPrefix = String(parts[0])
+            let pyPrefix: String
+            if parts.count == 2 {
+                pyPrefix = String(parts[1])
+            } else {
+                // Default: java prefix minus trailing dot.
+                pyPrefix = javaPrefix.hasSuffix(".")
+                    ? String(javaPrefix.dropLast())
+                    : javaPrefix
+            }
+            guard javaPrefix.hasSuffix(".") else {
+                throw ValidationError(
+                    "--external-module Java prefix '\(javaPrefix)' must end with '.' (e.g. 'android.') so it cannot accidentally match adjacent namespaces like 'androidx.'.")
+            }
+            guard !pyPrefix.isEmpty else {
+                throw ValidationError(
+                    "--external-module Python prefix for '\(javaPrefix)' is empty.")
+            }
+            result.append((javaPrefix, pyPrefix))
+        }
+        return result
+    }
+
 
     private func resolveBundledJar() throws -> URL {
         if let url = Bundle.module.url(forResource: "java-ast-emitter", withExtension: "jar") {

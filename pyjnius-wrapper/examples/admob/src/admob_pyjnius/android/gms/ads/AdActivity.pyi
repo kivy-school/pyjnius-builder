@@ -1,62 +1,9 @@
 from typing import Any, ClassVar, overload
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class Bundle:
-    """Forward declaration for ``android.os.Bundle``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Bundle
-    """
-    ...
-class View:
-    """Forward declaration for ``android.view.View``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.view.View')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/view/View
-    """
-    ...
-class LayoutParams:
-    """Forward declaration for ``android.view.ViewGroup.LayoutParams``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.view.ViewGroup.LayoutParams')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/view/ViewGroup/LayoutParams
-    """
-    ...
-class Intent:
-    """Forward declaration for ``android.content.Intent``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.Intent')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/Intent
-    """
-    ...
-class Configuration:
-    """Forward declaration for ``android.content.res.Configuration``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.res.Configuration')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/res/Configuration
-    """
-    ...
+from android.content.Intent import Intent
+from android.content.res.Configuration import Configuration
+from android.os.Bundle import Bundle
+from android.view.View import View
+from android.view.ViewGroup.LayoutParams import LayoutParams
 
 class AdActivity:
     CLASS_NAME: ClassVar[str]

@@ -5,20 +5,10 @@ from android.gms.ads.MuteThisAdReason import MuteThisAdReason
 from android.gms.ads.OnPaidEventListener import OnPaidEventListener
 from android.gms.ads.ResponseInfo import ResponseInfo
 from android.gms.internal.ads.zzboc import zzboc
+from android.os.Bundle import Bundle
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Bundle:
-    """Forward declaration for ``android.os.Bundle``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Bundle
-    """
-    ...
 class Image:
     """Forward declaration for ``com.google.android.gms.ads.nativead.NativeAd.Image``.
 

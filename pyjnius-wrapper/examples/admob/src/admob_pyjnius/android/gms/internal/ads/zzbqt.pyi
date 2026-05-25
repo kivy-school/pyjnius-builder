@@ -1,161 +1,18 @@
 from typing import Any, ClassVar, overload
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class WebViewClient:
-    """Forward declaration for ``android.webkit.WebViewClient``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.WebViewClient')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/WebViewClient
-    """
-    ...
-class WebView:
-    """Forward declaration for ``android.webkit.WebView``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.WebView')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/WebView
-    """
-    ...
-class WebResourceRequest:
-    """Forward declaration for ``android.webkit.WebResourceRequest``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.WebResourceRequest')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/WebResourceRequest
-    """
-    ...
-class Bitmap:
-    """Forward declaration for ``android.graphics.Bitmap``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.graphics.Bitmap')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/graphics/Bitmap
-    """
-    ...
-class WebResourceResponse:
-    """Forward declaration for ``android.webkit.WebResourceResponse``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.WebResourceResponse')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/WebResourceResponse
-    """
-    ...
-class Message:
-    """Forward declaration for ``android.os.Message``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Message')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Message
-    """
-    ...
-class WebResourceError:
-    """Forward declaration for ``android.webkit.WebResourceError``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.WebResourceError')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/WebResourceError
-    """
-    ...
-class SslErrorHandler:
-    """Forward declaration for ``android.webkit.SslErrorHandler``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.SslErrorHandler')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/SslErrorHandler
-    """
-    ...
-class SslError:
-    """Forward declaration for ``android.net.http.SslError``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.net.http.SslError')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/net/http/SslError
-    """
-    ...
-class ClientCertRequest:
-    """Forward declaration for ``android.webkit.ClientCertRequest``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.ClientCertRequest')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/ClientCertRequest
-    """
-    ...
-class HttpAuthHandler:
-    """Forward declaration for ``android.webkit.HttpAuthHandler``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.HttpAuthHandler')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/HttpAuthHandler
-    """
-    ...
-class KeyEvent:
-    """Forward declaration for ``android.view.KeyEvent``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.view.KeyEvent')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/view/KeyEvent
-    """
-    ...
-class RenderProcessGoneDetail:
-    """Forward declaration for ``android.webkit.RenderProcessGoneDetail``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.RenderProcessGoneDetail')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/RenderProcessGoneDetail
-    """
-    ...
-class SafeBrowsingResponse:
-    """Forward declaration for ``android.webkit.SafeBrowsingResponse``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.webkit.SafeBrowsingResponse')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/webkit/SafeBrowsingResponse
-    """
-    ...
+from android.graphics.Bitmap import Bitmap
+from android.net.http.SslError import SslError
+from android.os.Message import Message
+from android.view.KeyEvent import KeyEvent
+from android.webkit.ClientCertRequest import ClientCertRequest
+from android.webkit.HttpAuthHandler import HttpAuthHandler
+from android.webkit.RenderProcessGoneDetail import RenderProcessGoneDetail
+from android.webkit.SafeBrowsingResponse import SafeBrowsingResponse
+from android.webkit.SslErrorHandler import SslErrorHandler
+from android.webkit.WebResourceError import WebResourceError
+from android.webkit.WebResourceRequest import WebResourceRequest
+from android.webkit.WebResourceResponse import WebResourceResponse
+from android.webkit.WebView import WebView
+from android.webkit.WebViewClient import WebViewClient
 
 class zzbqt:
     def __init__(self) -> None: ...

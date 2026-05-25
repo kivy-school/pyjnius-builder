@@ -1,4 +1,6 @@
 from typing import Any, ClassVar, overload
+from android.app.Activity import Activity
+from android.content.Context import Context
 from android.gms.ads.h5.OnH5AdsEventListener import OnH5AdsEventListener
 from android.gms.ads.internal.client.zzbq import zzbq
 from android.gms.ads.internal.client.zzbu import zzbu
@@ -20,42 +22,7 @@ from android.gms.internal.ads.zzbzi import zzbzi
 from android.gms.internal.ads.zzccp import zzccp
 from android.gms.internal.ads.zzcdb import zzcdb
 from android.gms.internal.ads.zzcet import zzcet
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class Context:
-    """Forward declaration for ``android.content.Context``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.Context')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/Context
-    """
-    ...
-class FrameLayout:
-    """Forward declaration for ``android.widget.FrameLayout``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.widget.FrameLayout')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/widget/FrameLayout
-    """
-    ...
-class Activity:
-    """Forward declaration for ``android.app.Activity``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.app.Activity')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/app/Activity
-    """
-    ...
+from android.widget.FrameLayout import FrameLayout
 
 class zzaw:
     def __init__(self, arg0: zzk, arg1: zzi, arg2: zzfc, arg3: zzboe, arg4: zzcdb, arg5: zzbzf, arg6: zzbof, arg7: zzl) -> None: ...

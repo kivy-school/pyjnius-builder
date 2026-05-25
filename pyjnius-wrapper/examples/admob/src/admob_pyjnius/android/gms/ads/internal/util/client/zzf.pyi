@@ -1,68 +1,19 @@
 from typing import Any, ClassVar, overload
+from android.app.ActivityManager.MemoryInfo import MemoryInfo
+from android.content.Context import Context
 from android.gms.ads.AdFormat import AdFormat
 from android.gms.ads.AdSize import AdSize
 from android.gms.ads.internal.client.zzfp import zzfp
 from android.gms.ads.internal.client.zzr import zzr
 from android.gms.ads.internal.util.client.zze import zze
 from android.gms.ads.preload.PreloadConfiguration import PreloadConfiguration
+from android.os.Bundle import Bundle
+from android.os.Handler import Handler
+from android.util.DisplayMetrics import DisplayMetrics
+from android.view.ViewGroup import ViewGroup
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Handler:
-    """Forward declaration for ``android.os.Handler``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Handler')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Handler
-    """
-    ...
-class Context:
-    """Forward declaration for ``android.content.Context``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.content.Context')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/content/Context
-    """
-    ...
-class ViewGroup:
-    """Forward declaration for ``android.view.ViewGroup``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.view.ViewGroup')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/view/ViewGroup
-    """
-    ...
-class MemoryInfo:
-    """Forward declaration for ``android.app.ActivityManager.MemoryInfo``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.app.ActivityManager.MemoryInfo')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/app/ActivityManager/MemoryInfo
-    """
-    ...
-class Bundle:
-    """Forward declaration for ``android.os.Bundle``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Bundle
-    """
-    ...
 class JSONObject:
     """Forward declaration for ``org.json.JSONObject``.
 
@@ -70,17 +21,6 @@ class JSONObject:
     wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
     live ``autoclass('org.json.JSONObject')`` proxy; this empty class exists
     purely so static type checkers and IDEs can resolve the name.
-    """
-    ...
-class DisplayMetrics:
-    """Forward declaration for ``android.util.DisplayMetrics``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.util.DisplayMetrics')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/util/DisplayMetrics
     """
     ...
 class StackTraceElement:

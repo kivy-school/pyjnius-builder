@@ -7,7 +7,7 @@ name = "admob-pyjnius"
 version = "25.3.0"
 description = "pyjnius wrappers for Google AdMob play-services-ads-api 25.3.0"
 requires-python = ">=3.11"
-dependencies = ["pyjnius"]
+dependencies = ["pyjnius", "android-pyjnius"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/admob_pyjnius"]

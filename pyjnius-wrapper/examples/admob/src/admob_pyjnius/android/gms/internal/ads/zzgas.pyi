@@ -1,5 +1,6 @@
 from typing import Any, ClassVar, overload
 from android.gms.internal.ads.zzgai import zzgai
+from android.net.Network import Network
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
@@ -23,17 +24,6 @@ class URLConnection:
     purely so static type checkers and IDEs can resolve the name.
 
     See: https://docs.oracle.com/javase/8/docs/api/java/net/URLConnection.html
-    """
-    ...
-class Network:
-    """Forward declaration for ``android.net.Network``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.net.Network')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/net/Network
     """
     ...
 class HttpURLConnection:

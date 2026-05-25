@@ -8,20 +8,10 @@ from android.gms.internal.ads.zzbme import zzbme
 from android.gms.internal.ads.zzbmi import zzbmi
 from android.gms.internal.ads.zzbml import zzbml
 from android.gms.internal.ads.zzbnz import zzbnz
+from android.os.Bundle import Bundle
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
-class Bundle:
-    """Forward declaration for ``android.os.Bundle``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Bundle')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Bundle
-    """
-    ...
 class IObjectWrapper:
     """Forward declaration for ``com.google.android.gms.dynamic.IObjectWrapper``.
 

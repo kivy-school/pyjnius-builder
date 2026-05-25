@@ -33,13 +33,22 @@ public struct PyiStubEmitter {
         /// Given a top-level FQCN, return the dotted Python module path
         /// (e.g. `"android.gms.ads.MobileAds"`) for the file we emit.
         public var modulePath: (String) -> String?
+        /// Maps a Java package prefix (must end with `.`, e.g. `"android."`)
+        /// to an existing Python module prefix (e.g. `"android"`). When an
+        /// otherwise-unresolved class FQCN starts with `javaPrefix`, the
+        /// emitter imports it from `<pyPrefix>.<subpkg>.<Simple>` instead
+        /// of synthesizing a forward-declared stub. Mirrors the per-class
+        /// layout produced by `pyjnius-wrap --keep-package-prefix`.
+        public var externalModules: [(javaPrefix: String, pyPrefix: String)]
 
         public init(topLevelFqcns: Swift.Set<String> = [],
                     allFqcns: Swift.Set<String> = [],
-                    modulePath: @escaping (String) -> String? = { _ in nil }) {
+                    modulePath: @escaping (String) -> String? = { _ in nil },
+                    externalModules: [(javaPrefix: String, pyPrefix: String)] = []) {
             self.topLevelFqcns = topLevelFqcns
             self.allFqcns = allFqcns
             self.modulePath = modulePath
+            self.externalModules = externalModules
         }
     }
 
@@ -87,6 +96,26 @@ public struct PyiStubEmitter {
                let module = resolution.modulePath(fqcn) {
                 addImport(module, simple)
                 return simple
+            }
+            // External package mapping (e.g. android.* lives in a separate
+            // pre-wrapped `android-pyjnius` package). Import from there
+            // instead of stubbing.
+            for (javaPrefix, pyPrefix) in resolution.externalModules {
+                guard fqcn.hasPrefix(javaPrefix) else { continue }
+                let tail = String(fqcn.dropFirst(javaPrefix.count))
+                let parts = tail.split(separator: ".").map(String.init)
+                guard let last = parts.last,
+                      Self.isValidIdentifier(last),
+                      !selfNames.contains(last) else { continue }
+                let sub = parts.dropLast().joined(separator: ".")
+                let module: String
+                if sub.isEmpty {
+                    module = "\(pyPrefix).\(last)"
+                } else {
+                    module = "\(pyPrefix).\(sub).\(last)"
+                }
+                addImport(module, last)
+                return last
             }
             // Unwrapped external: synthesize a forward-declared stub class
             // at the top of this file so the name actually resolves.

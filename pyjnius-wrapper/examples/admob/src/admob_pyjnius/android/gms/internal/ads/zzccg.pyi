@@ -1,30 +1,7 @@
 from typing import Any, ClassVar, overload
 from android.gms.internal.ads.zzcch import zzcch
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class IBinder:
-    """Forward declaration for ``android.os.IBinder``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.IBinder')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/IBinder
-    """
-    ...
-class Parcel:
-    """Forward declaration for ``android.os.Parcel``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.os.Parcel')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/os/Parcel
-    """
-    ...
+from android.os.IBinder import IBinder
+from android.os.Parcel import Parcel
 
 class zzccg:
     def __init__(self) -> None: ...

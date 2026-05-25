@@ -2,6 +2,7 @@ from typing import Any, ClassVar, overload
 from android.gms.ads.formats.NativeAdOptions import NativeAdOptions
 from android.gms.ads.nativead.NativeAdOptions import NativeAdOptions
 from android.gms.internal.ads.zzbma import zzbma
+from android.location.Location import Location
 
 # Forward declarations for Java types we do not wrap.
 # Bound as empty classes so annotations resolve in the IDE.
@@ -14,17 +15,6 @@ class Date:
     purely so static type checkers and IDEs can resolve the name.
 
     See: https://docs.oracle.com/javase/8/docs/api/java/util/Date.html
-    """
-    ...
-class Location:
-    """Forward declaration for ``android.location.Location``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.location.Location')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/location/Location
     """
     ...
 

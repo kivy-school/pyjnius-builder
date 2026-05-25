@@ -10,31 +10,8 @@ from android.gms.ads.internal.client.zza import zza
 from android.gms.ads.internal.client.zzbu import zzbu
 from android.gms.ads.internal.client.zzea import zzea
 from android.gms.ads.internal.client.zzeh import zzeh
-
-# Forward declarations for Java types we do not wrap.
-# Bound as empty classes so annotations resolve in the IDE.
-class ViewGroup:
-    """Forward declaration for ``android.view.ViewGroup``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.view.ViewGroup')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/view/ViewGroup
-    """
-    ...
-class AttributeSet:
-    """Forward declaration for ``android.util.AttributeSet``.
-
-    This Java type is referenced by the wrapper but is not itself
-    wrapped by pyjnius-wrap. At runtime pyjnius will hand you a
-    live ``autoclass('android.util.AttributeSet')`` proxy; this empty class exists
-    purely so static type checkers and IDEs can resolve the name.
-
-    See: https://developer.android.com/reference/android/util/AttributeSet
-    """
-    ...
+from android.util.AttributeSet import AttributeSet
+from android.view.ViewGroup import ViewGroup
 
 class zzek:
     @overload
