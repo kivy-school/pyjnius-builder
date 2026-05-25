@@ -1,7 +1,12 @@
 from typing import Any, ClassVar, overload
+from android.gms.ads.h5.OnH5AdsEventListener import OnH5AdsEventListener
+
+# Forward declarations for Java types we do not wrap.
+# Bound as empty classes so annotations resolve in the IDE.
+class Context: ...  # android.content.Context
 
 class zzbre:
-    def __init__(self, arg0: "Context", arg1: "OnH5AdsEventListener") -> None: ...
+    def __init__(self, arg0: Context, arg1: OnH5AdsEventListener) -> None: ...
     def zza(self, arg0: str) -> bool: ...
     def zzb(self) -> None: ...
     @staticmethod

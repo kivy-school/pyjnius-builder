@@ -1,8 +1,12 @@
 from typing import Any, ClassVar, overload
 
+# Forward declarations for Java types we do not wrap.
+# Bound as empty classes so annotations resolve in the IDE.
+class Bundle: ...  # android.os.Bundle
+
 class AdManagerAdRequest:
     def getPublisherProvidedId(self) -> str: ...
-    def getCustomTargeting(self) -> "Bundle": ...
+    def getCustomTargeting(self) -> Bundle: ...
 
     class Builder:
         def __init__(self) -> None: ...

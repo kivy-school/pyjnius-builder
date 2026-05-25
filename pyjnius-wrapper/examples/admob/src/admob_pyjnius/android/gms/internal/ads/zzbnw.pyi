@@ -1,4 +1,5 @@
 from typing import Any, ClassVar, overload
+from android.gms.internal.ads.zzboc import zzboc
 
 class zzbnw:
-    def zze(self, arg0: "zzboc") -> None: ...
+    def zze(self, arg0: zzboc) -> None: ...

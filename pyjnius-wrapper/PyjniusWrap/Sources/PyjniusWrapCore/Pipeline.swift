@@ -78,6 +78,28 @@ public struct Pipeline {
             ? commonPackagePrefix(of: doc.classes)
             : []
 
+        // Build the resolution context the .pyi emitter uses to decide
+        // between cross-file imports, same-file forward refs, and external
+        // forward-declared stubs.
+        let topLevelFqcns = Swift.Set(doc.classes.map { $0.fqcn })
+        var allFqcns = Swift.Set<String>()
+        func collectFqcns(_ c: ClassNode) {
+            allFqcns.insert(c.fqcn)
+            for n in c.nested { collectFqcns(n) }
+        }
+        for c in doc.classes { collectFqcns(c) }
+        let modulePath: (String) -> String? = { fqcn in
+            guard topLevelFqcns.contains(fqcn) else { return nil }
+            let pkg = self.packageParts(of: fqcn, stripping: stripPrefix)
+            let simple = fqcn.split(separator: ".").last.map(String.init) ?? fqcn
+            return (pkg + [simple]).joined(separator: ".")
+        }
+        let resolution = PyiStubEmitter.Resolution(
+            topLevelFqcns: topLevelFqcns,
+            allFqcns: allFqcns,
+            modulePath: modulePath
+        )
+
         switch opts.fileLayout {
         case .perClass:
             var packagesTouched = Swift.Set<URL>()
@@ -96,7 +118,7 @@ public struct Pipeline {
                 written.append(file)
 
                 // Companion .pyi stub with Pythonic types.
-                let stub = pyiEmitter.render(cls)
+                let stub = pyiEmitter.render(cls, resolution: resolution)
                 let stubFile = dir.appendingPathComponent("\(cls.simpleName).pyi")
                 try stub.write(to: stubFile, atomically: true, encoding: .utf8)
                 written.append(stubFile)

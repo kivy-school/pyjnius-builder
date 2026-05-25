@@ -1,9 +1,14 @@
 from typing import Any, ClassVar, overload
 
+# Forward declarations for Java types we do not wrap.
+# Bound as empty classes so annotations resolve in the IDE.
+class Context: ...  # android.content.Context
+class ComponentName: ...  # android.content.ComponentName
+
 class XiaomiHomeBadger:
     INTENT_ACTION: ClassVar[str]
     EXTRA_UPDATE_APP_COMPONENT_NAME: ClassVar[str]
     EXTRA_UPDATE_APP_MSG_TEXT: ClassVar[str]
     def __init__(self) -> None: ...
-    def executeBadge(self, arg0: "Context", arg1: "ComponentName", arg2: int) -> None: ...
+    def executeBadge(self, arg0: Context, arg1: ComponentName, arg2: int) -> None: ...
     def getSupportLaunchers(self) -> list: ...

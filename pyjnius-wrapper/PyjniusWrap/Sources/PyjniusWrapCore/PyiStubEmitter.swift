@@ -1,35 +1,141 @@
 import Foundation
 
 /// Emits a PEP-484 `.pyi` stub file with Pythonic types for each pyjnius
-/// wrapper class. The intent is editor / type-checker friendliness:
-/// `String` → `str`, `int`/`long`/`Integer` → `int`, `List` → `list`,
-/// arrays → `list[T]`, varargs → `*name: T`, overloaded methods → `@overload`,
-/// static fields → `ClassVar[T]`, enum constants → `ClassVar[Self]`.
+/// wrapper class. Goals:
 ///
-/// Unknown reference types fall back to a quoted forward reference using
-/// the simple class name.
+/// 1. Every annotation in the stub must be **resolvable** by the IDE.
+///    A quoted forward ref pointing at a name that isn't defined anywhere
+///    just collapses to `Any` *plus* raises an "unresolved reference"
+///    warning — worst of both worlds.
+/// 2. For wrapped types in another `.py` file we emit a real
+///    `from x.y.z import Foo` and use the bare name.
+/// 3. For same-file nested types (e.g. `Builder`, `Companion`, `UseThread`)
+///    we use quoted forward refs — pyright/mypy resolve those because the
+///    symbol exists in the same module.
+/// 4. For everything else (unwrapped externals like `android.app.Activity`,
+///    `java.lang.Runnable`, `android.os.Bundle`) we **synthesize a
+///    methodless stub class at the top of the `.pyi`** and bind the
+///    annotation to that. The IDE sees a real type with the right simple
+///    name instead of `Any`. A comment records the Java FQCN so the reader
+///    can find it.
+/// 5. `Any` is the absolute last resort (e.g. `java.lang.Object`, or an
+///    unrepresentable type).
 public struct PyiStubEmitter {
+
+    /// Information the emitter needs to convert Java FQCNs into Pythonic
+    /// annotations + decide which imports to add at the top of the stub.
+    public struct Resolution {
+        /// FQCNs of top-level classes that have their own generated `.py`
+        /// file. These are the only things we can `from … import` from.
+        public var topLevelFqcns: Swift.Set<String>
+        /// FQCNs of every wrapped type (top-level + nested).
+        public var allFqcns: Swift.Set<String>
+        /// Given a top-level FQCN, return the dotted Python module path
+        /// (e.g. `"android.gms.ads.MobileAds"`) for the file we emit.
+        public var modulePath: (String) -> String?
+
+        public init(topLevelFqcns: Swift.Set<String> = [],
+                    allFqcns: Swift.Set<String> = [],
+                    modulePath: @escaping (String) -> String? = { _ in nil }) {
+            self.topLevelFqcns = topLevelFqcns
+            self.allFqcns = allFqcns
+            self.modulePath = modulePath
+        }
+    }
 
     public init() {}
 
     /// Render a `.pyi` stub for a single top-level class (with nested types
     /// embedded as nested `class` blocks).
-    public func render(_ cls: ClassNode) -> String {
-        var lines: [String] = []
-        lines.append("from typing import Any, ClassVar, overload")
+    public func render(_ cls: ClassNode,
+                       resolution: Resolution = .init()) -> String {
+        let selfNames = Self.collectSimpleNames(in: cls)
+        var imports: [(module: String, name: String)] = []
+        var importKeys = Swift.Set<String>()
+        // External class refs that aren't wrapped, not built-in, not same-file.
+        // simpleName → FQCN of the FIRST occurrence (collisions across
+        // different packages keep the first; comment shows which one).
+        var externals: [String: String] = [:]
+        var externalOrder: [String] = []
+
+        func addImport(_ module: String, _ name: String) {
+            let key = "\(module):\(name)"
+            if importKeys.insert(key).inserted {
+                imports.append((module, name))
+            }
+        }
+
+        func mapRef(_ fqcn: String) -> String {
+            if fqcn.hasSuffix("[]") {
+                let inner = mapRef(String(fqcn.dropLast(2)))
+                // If the inner type is unresolvable we'd produce `list[Any]`
+                // which is no more informative than a bare `list` — and a
+                // bare `list` is what Java arrays of unknowns actually map
+                // to at runtime via pyjnius anyway.
+                return inner == "Any" ? "list" : "list[\(inner)]"
+            }
+            if let mapped = Self.builtinMap[fqcn] { return mapped }
+            // Reference type. Decide bucket.
+            let simple = fqcn.split(separator: ".").last.map(String.init) ?? fqcn
+            // Same-file nested ref: quoted forward ref resolves against the
+            // enclosing module.
+            if resolution.allFqcns.contains(fqcn) && selfNames.contains(simple) {
+                return "\"\(simple)\""
+            }
+            // Cross-file wrapped: real import + bare name.
+            if resolution.topLevelFqcns.contains(fqcn),
+               let module = resolution.modulePath(fqcn) {
+                addImport(module, simple)
+                return simple
+            }
+            // Unwrapped external: synthesize a forward-declared stub class
+            // at the top of this file so the name actually resolves.
+            if Self.isValidIdentifier(simple) && !selfNames.contains(simple) {
+                if externals[simple] == nil {
+                    externals[simple] = fqcn
+                    externalOrder.append(simple)
+                }
+                return simple
+            }
+            // Last resort.
+            return "Any"
+        }
+
+        var body: [String] = []
+        appendClass(cls, indent: "", into: &body, mapRef: mapRef)
+
+        // Header: typing, imports, external forward-decl stubs, body.
+        var lines: [String] = ["from typing import Any, ClassVar, overload"]
+        let sortedImports = imports.sorted {
+            $0.module == $1.module ? $0.name < $1.name : $0.module < $1.module
+        }
+        for imp in sortedImports {
+            lines.append("from \(imp.module) import \(imp.name)")
+        }
+        if !externalOrder.isEmpty {
+            lines.append("")
+            lines.append("# Forward declarations for Java types we do not wrap.")
+            lines.append("# Bound as empty classes so annotations resolve in the IDE.")
+            for name in externalOrder {
+                let fqcn = externals[name] ?? name
+                lines.append("class \(name): ...  # \(fqcn)")
+            }
+        }
         lines.append("")
-        appendClass(cls, indent: "", into: &lines)
+        lines.append(contentsOf: body)
         return lines.joined(separator: "\n") + "\n"
     }
 
-    // MARK: - Class
+    // MARK: - Class body
 
-    private func appendClass(_ cls: ClassNode, indent: String, into lines: inout [String]) {
+    private func appendClass(_ cls: ClassNode,
+                             indent: String,
+                             into lines: inout [String],
+                             mapRef: (String) -> String) {
         lines.append("\(indent)class \(cls.simpleName):")
         let body = indent + "    "
         var produced = false
 
-        // Enum constants
         if cls.kind == .enumType, let constants = cls.enumConstants {
             for ec in constants {
                 lines.append("\(body)\(ec.name): ClassVar[\"\(cls.simpleName)\"]")
@@ -37,33 +143,32 @@ public struct PyiStubEmitter {
             }
         }
 
-        // Static then instance fields
         for f in cls.fields where f.isStatic {
-            lines.append("\(body)\(safeName(f.name)): ClassVar[\(pyType(of: f.typeFqcn))]")
+            lines.append("\(body)\(safeName(f.name)): ClassVar[\(mapRef(f.typeFqcn))]")
             produced = true
         }
         for f in cls.fields where !f.isStatic {
-            lines.append("\(body)\(safeName(f.name)): \(pyType(of: f.typeFqcn))")
+            lines.append("\(body)\(safeName(f.name)): \(mapRef(f.typeFqcn))")
             produced = true
         }
 
-        // Constructors → __init__
         if cls.kind != .interfaceType && !cls.constructors.isEmpty {
             if cls.constructors.count == 1 {
                 let c = cls.constructors[0]
-                let params = formatParams(c.parameters, varargs: c.isVarargs, includeSelf: true)
+                let params = formatParams(c.parameters, varargs: c.isVarargs,
+                                          includeSelf: true, mapRef: mapRef)
                 lines.append("\(body)def __init__\(params) -> None: ...")
             } else {
                 for c in cls.constructors {
                     lines.append("\(body)@overload")
-                    let params = formatParams(c.parameters, varargs: c.isVarargs, includeSelf: true)
+                    let params = formatParams(c.parameters, varargs: c.isVarargs,
+                                              includeSelf: true, mapRef: mapRef)
                     lines.append("\(body)def __init__\(params) -> None: ...")
                 }
             }
             produced = true
         }
 
-        // Methods grouped by name (preserves declaration order)
         var order: [String] = []
         var bucket: [String: [MethodNode]] = [:]
         for m in cls.methods {
@@ -74,19 +179,20 @@ public struct PyiStubEmitter {
             let methods = bucket[name]!
             let safe = safeName(name)
             if methods.count == 1 {
-                emitMethod(methods[0], pyName: safe, body: body, overload: false, into: &lines)
+                emitMethod(methods[0], pyName: safe, body: body,
+                           overload: false, mapRef: mapRef, into: &lines)
             } else {
                 for m in methods {
-                    emitMethod(m, pyName: safe, body: body, overload: true, into: &lines)
+                    emitMethod(m, pyName: safe, body: body,
+                               overload: true, mapRef: mapRef, into: &lines)
                 }
             }
             produced = true
         }
 
-        // Nested classes
         for n in cls.nested {
             lines.append("")
-            appendClass(n, indent: body, into: &lines)
+            appendClass(n, indent: body, into: &lines, mapRef: mapRef)
             produced = true
         }
 
@@ -96,30 +202,53 @@ public struct PyiStubEmitter {
     }
 
     private func emitMethod(_ m: MethodNode, pyName: String, body: String,
-                            overload: Bool, into lines: inout [String]) {
+                            overload: Bool,
+                            mapRef: (String) -> String,
+                            into lines: inout [String]) {
         if overload { lines.append("\(body)@overload") }
         if m.isStatic { lines.append("\(body)@staticmethod") }
-        let params = formatParams(m.parameters, varargs: m.isVarargs, includeSelf: !m.isStatic)
-        let ret = pyType(of: m.returnTypeFqcn)
+        let params = formatParams(m.parameters, varargs: m.isVarargs,
+                                  includeSelf: !m.isStatic, mapRef: mapRef)
+        let ret = mapRef(m.returnTypeFqcn)
         lines.append("\(body)def \(pyName)\(params) -> \(ret): ...")
     }
 
-    // MARK: - Params
-
-    private func formatParams(_ params: [ParamNode], varargs: Bool, includeSelf: Bool) -> String {
+    private func formatParams(_ params: [ParamNode],
+                              varargs: Bool,
+                              includeSelf: Bool,
+                              mapRef: (String) -> String) -> String {
         var parts: [String] = []
         if includeSelf { parts.append("self") }
         let last = params.count - 1
         for (i, p) in params.enumerated() {
             let name = safeParamName(p.name, idx: i)
             if varargs && i == last && p.typeFqcn.hasSuffix("[]") {
-                let inner = pyType(of: String(p.typeFqcn.dropLast(2)))
+                let inner = mapRef(String(p.typeFqcn.dropLast(2)))
                 parts.append("*\(name): \(inner)")
             } else {
-                parts.append("\(name): \(pyType(of: p.typeFqcn))")
+                parts.append("\(name): \(mapRef(p.typeFqcn))")
             }
         }
         return "(" + parts.joined(separator: ", ") + ")"
+    }
+
+    // MARK: - Helpers
+
+    /// Simple names of `cls` and every nested type, recursively. These are
+    /// the identifiers a quoted forward ref inside this stub can legally
+    /// point at.
+    private static func collectSimpleNames(in cls: ClassNode) -> Swift.Set<String> {
+        var names: Swift.Set<String> = [cls.simpleName]
+        for n in cls.nested {
+            names.formUnion(collectSimpleNames(in: n))
+        }
+        return names
+    }
+
+    private static func isValidIdentifier(_ s: String) -> Bool {
+        guard let first = s.first else { return false }
+        guard first.isLetter || first == "_" else { return false }
+        return s.allSatisfy { $0.isLetter || $0.isNumber || $0 == "_" }
     }
 
     private func safeParamName(_ name: String, idx: Int) -> String {
@@ -138,39 +267,29 @@ public struct PyiStubEmitter {
         "try","while","with","yield","match","case"
     ]
 
-    // MARK: - Type mapping
-
-    /// Java FQCN (or "int[]"-style array string) → Python annotation.
-    public func pyType(of fqcn: String) -> String {
-        if fqcn.hasSuffix("[]") {
-            return "list[\(pyType(of: String(fqcn.dropLast(2))))]"
-        }
-        switch fqcn {
-        case "void": return "None"
-        case "boolean": return "bool"
-        case "byte", "short", "int", "long": return "int"
-        case "float", "double": return "float"
-        case "char": return "str"
-        case "java.lang.String", "java.lang.CharSequence": return "str"
-        case "java.lang.Object": return "Any"
-        case "java.lang.Boolean": return "bool"
-        case "java.lang.Integer", "java.lang.Long",
-             "java.lang.Short", "java.lang.Byte": return "int"
-        case "java.lang.Float", "java.lang.Double", "java.lang.Number": return "float"
-        case "java.lang.Character": return "str"
-        case "java.util.List", "java.util.Collection",
-             "java.util.ArrayList", "java.util.LinkedList": return "list"
-        case "java.util.Map", "java.util.HashMap", "java.util.LinkedHashMap",
-             "java.util.TreeMap": return "dict"
-        case "java.util.Set", "java.util.HashSet", "java.util.LinkedHashSet",
-             "java.util.TreeSet": return "set"
-        case "java.lang.Class": return "type"
-        default:
-            // Forward-reference by simple name. For nested types Java uses '.' in
-            // typeFqcn, but pyjnius only knows the outermost class so the simple
-            // name is the most useful hint for IDE autocomplete.
-            let simple = fqcn.split(separator: ".").last.map(String.init) ?? fqcn
-            return "\"\(simple)\""
-        }
-    }
+    /// Built-in mapping table — fixed conversions only. Misses fall through
+    /// to `Resolution`-aware logic in `mapRef`.
+    private static let builtinMap: [String: String] = [
+        "void": "None",
+        "boolean": "bool",
+        "byte": "int", "short": "int", "int": "int", "long": "int",
+        "float": "float", "double": "float",
+        "char": "str",
+        "java.lang.String": "str",
+        "java.lang.CharSequence": "str",
+        "java.lang.Object": "Any",
+        "java.lang.Boolean": "bool",
+        "java.lang.Integer": "int", "java.lang.Long": "int",
+        "java.lang.Short": "int", "java.lang.Byte": "int",
+        "java.lang.Float": "float", "java.lang.Double": "float",
+        "java.lang.Number": "float",
+        "java.lang.Character": "str",
+        "java.util.List": "list", "java.util.Collection": "list",
+        "java.util.ArrayList": "list", "java.util.LinkedList": "list",
+        "java.util.Map": "dict", "java.util.HashMap": "dict",
+        "java.util.LinkedHashMap": "dict", "java.util.TreeMap": "dict",
+        "java.util.Set": "set", "java.util.HashSet": "set",
+        "java.util.LinkedHashSet": "set", "java.util.TreeSet": "set",
+        "java.lang.Class": "type",
+    ]
 }
