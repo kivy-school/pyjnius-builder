@@ -7,6 +7,10 @@ import json
 import tarfile
 import tempfile
 import zipfile
+import base64
+import csv
+import hashlib
+from io import StringIO
 
 from hatchling.build import (
     build_editable as _hatchling_build_editable,
@@ -100,15 +104,65 @@ def _collect_java_files(java_dirs: list[Path]) -> list[tuple[Path, str]]:
     return java_files
 
 
+def _get_pypi_hash(data: bytes) -> str:
+    """Calculates the urlsafe base64 sha256 hash required by PEP 376 / PEP 427."""
+    digest = hashlib.sha256(data).digest()
+    return "sha256=" + base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
+
+
 def add_java_sources_to_wheel(wheel_path: Path, java_dirs: list[Path]) -> None:
     if not java_dirs:
         return
     java_files = _collect_java_files(java_dirs)
     if not java_files:
         return
-    with zipfile.ZipFile(wheel_path, "a", compression=zipfile.ZIP_DEFLATED) as wheel:
-        for source_file, archive_name in java_files:
-            wheel.writestr(archive_name, source_file.read_bytes())
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        temp_wheel_path = Path(tmpdir) / "rewritten.whl"
+
+        with zipfile.ZipFile(wheel_path, "r") as old_wheel:
+            record_path = next(
+                (
+                    name
+                    for name in old_wheel.namelist()
+                    if name.endswith(".dist-info/RECORD")
+                ),
+                None,
+            )
+
+            if not record_path:
+                raise FileNotFoundError(
+                    "Could not find RECORD file in the generated wheel."
+                )
+
+            record_data = old_wheel.read(record_path).decode("utf-8")
+
+            with zipfile.ZipFile(
+                temp_wheel_path, "w", compression=zipfile.ZIP_DEFLATED
+            ) as new_wheel:
+                for item in old_wheel.infolist():
+                    if item.filename != record_path:
+                        new_wheel.writestr(item, old_wheel.read(item.filename))
+
+                record_io = StringIO()
+                csv_writer = csv.writer(record_io, lineterminator="\n")
+
+                csv_reader = csv.reader(StringIO(record_data))
+                for row in csv_reader:
+                    csv_writer.writerow(row)
+
+                for source_file, archive_name in java_files:
+                    file_bytes = source_file.read_bytes()
+                    new_wheel.writestr(archive_name, file_bytes)
+
+                    file_hash = _get_pypi_hash(file_bytes)
+                    file_size = len(file_bytes)
+
+                    csv_writer.writerow([archive_name, file_hash, file_size])
+
+                new_wheel.writestr(record_path, record_io.getvalue().encode("utf-8"))
+
+        temp_wheel_path.replace(wheel_path)
 
 
 def add_java_sources_to_sdist(sdist_path: Path, java_dirs: list[Path]) -> None:
