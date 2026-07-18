@@ -7,6 +7,10 @@ import json
 import tarfile
 import tempfile
 import zipfile
+import base64
+import csv
+import hashlib
+from io import StringIO
 
 from hatchling.build import (
     build_editable as _hatchling_build_editable,
